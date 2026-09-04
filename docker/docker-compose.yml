@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: uasdisprog-mysql
+    environment:
+      MYSQL_DATABASE: uasdisprog
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ../Disprog_UAS/DataUASDisprog.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - uasdisprog-network
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: uasdisprog-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/uasdisprog
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - uasdisprog-network
+
+  tcp-server:
+    build:
+      context: ../tcp-server
+      dockerfile: Dockerfile
+    container_name: uasdisprog-tcp-server
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/uasdisprog
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      TCP_SERVER_PORT: 6002
+    ports:
+      - "6002:6002"
+    depends_on:
+      - mysql
+    networks:
+      - uasdisprog-network
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: uasdisprog-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - uasdisprog-network
+
+volumes:
+  mysql-data:
+
+networks:
+  uasdisprog-network:
+    driver: bridge

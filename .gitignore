@@ -1,0 +1,40 @@
+.DS_Store
+.idea/
+*.iml
+target/
+*.class
+*.log
+*.pid
+*.jar
+*.war
+*.ear
+
+# Backend
+backend/target/
+backend/uploads/
+
+# TCP Server
+tcp-server/target/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# Env lokal root project (berisi kunci/rahasia, jangan di-commit)
+.env.local
+
+# Sertifikat / keystore TLS (dibuat via scripts/gen-tls-certs.sh)
+tls/
+*.p12
+*.jks
+
+# IDE
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
